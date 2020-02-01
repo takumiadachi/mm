@@ -4,10 +4,14 @@
     "noImplicitAny": true,
     "removeComments": true,
     "preserveConstEnums": true,
+    "strictNullChecks": true,
+    "allowJs": true,
+    "target": "es5",
     "inlineSourceMap": true,
     "esModuleInterop": true,
     "baseUrl": "./",
     "outDir": "./dist",
+    "lib": ["es2015"],
     "types": ["node"]
   },
 

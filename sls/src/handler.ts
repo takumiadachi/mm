@@ -1,24 +1,24 @@
+import 'source-map-support/register'
 import * as Firebase from 'firebase/app';
 import axios from 'axios';
 import 'firebase/database';
 
+// module.exports.hello = async (event: any) => {
+//   return {
+//     statusCode: 200,
+//     body: JSON.stringify(
+//       {
+//         message: 'Go Serverless v1.x.x! Your function executed successfully!!!',
+//         input: event
+//       },
+//       null,
+//       2
+//     )
+//   };
 
-module.exports.hello = async (event: any) => {
-  return {
-    statusCode: 200,
-    body: JSON.stringify(
-      {
-        message: 'Go Serverless v1.x.x! Your function executed successfully!!!',
-        input: event
-      },
-      null,
-      2
-    )
-  };
-
-  // Use this code if you don't use the http event with the LAMBDA-PROXY integration
-  // return { message: 'Go Serverless v1.0! Your function executed successfully!', event };
-};
+//   // Use this code if you don't use the http event with the LAMBDA-PROXY integration
+//   // return { message: 'Go Serverless v1.0! Your function executed successfully!', event };
+// };
 
 // Setup HN
 let API: any;
@@ -35,16 +35,16 @@ if (Firebase.apps.length == 0) {
 
 module.exports.fetchItem = async (event: any, context: any, callback: any) => {
   context['callbackWaitsForEmptyEventLoop'] = false;
-  let id: number = null
+  let id: number = null;
 
   if (event.id) {
-    id = event.id
+    id = event.id;
   }
   // console.log(context)
   try {
     // console.log(id)
     const item = await fetchItem(id);
-    console.log(item)
+    console.log(item);
     return {
       statusCode: 200,
       body: JSON.stringify(
@@ -73,9 +73,54 @@ module.exports.fetchItem = async (event: any, context: any, callback: any) => {
   }
 };
 
+module.exports.fetchItems = async (event: any, context: any, callback: any) => {
+  context['callbackWaitsForEmptyEventLoop'] = false;
+  let ids: number[] = null;
+  let items: any[] = [];
+
+  if (event.ids) {
+    ids = event.ids;
+  }
+
+  console.log(event);
+  // console.log(context);
+  // console.log(callback);
+  try {
+
+    for (const id of ids) {
+      items.push(await fetchItem(id))
+    }
+    // console.log(items)
+    return {
+      statusCode: 200,
+      body: JSON.stringify(
+        {
+          message: items,
+          input: event
+        },
+        null,
+        2
+      )
+    };
+  } catch (error) {
+    return {
+      statusCode: 200,
+      body: JSON.stringify(
+        {
+          message: error,
+          input: event
+        },
+        null,
+        2
+      )
+    };
+  }
+};
+
 async function fetch(child: string) {
   try {
     const snapshot = await API.child(child).once('value');
+    console.log(snapshot);
     return snapshot.val();
   } catch (error) {
     console.log(error);

@@ -4,8 +4,16 @@ provider:
   name: aws
   runtime: nodejs12.x
 
+plugins:
+  - serverless-plugin-typescript
+  - serverless-offline
+  
 functions:
-  hello:
-    handler: dist/handler.hello
+  # hello:
+  #   handler: dist/handler.hello
   fetchItem:
     handler: dist/handler.fetchItem
+  fetchItems:
+    handler: dist/handler.fetchItems
+
+  
