@@ -1,6 +1,5 @@
 import 'source-map-support/register'
 import * as Firebase from 'firebase/app';
-import axios from 'axios';
 import 'firebase/database';
 
 // module.exports.hello = async (event: any) => {
@@ -35,7 +34,7 @@ if (Firebase.apps.length == 0) {
 
 module.exports.fetchItem = async (event: any, context: any, callback: any) => {
   context['callbackWaitsForEmptyEventLoop'] = false;
-  let id: number = null;
+  let id: number = -1;
 
   if (event.id) {
     id = event.id;
@@ -75,7 +74,7 @@ module.exports.fetchItem = async (event: any, context: any, callback: any) => {
 
 module.exports.fetchItems = async (event: any, context: any, callback: any) => {
   context['callbackWaitsForEmptyEventLoop'] = false;
-  let ids: number[] = null;
+  let ids: number[] = [];
   let items: any[] = [];
 
   if (event.ids) {
@@ -116,6 +115,46 @@ module.exports.fetchItems = async (event: any, context: any, callback: any) => {
     };
   }
 };
+
+module.exports.fetchTopStories = async (event: any, context: any) => {
+    context['callbackWaitsForEmptyEventLoop'] = false;
+    let ids: number[] = [];
+    let top: any[] = [];
+    // if (shortCache.has(`topstories`)) {
+    //   console.log(`Cache hit: topstories`);
+    //   const top = shortCache.get(`topstories`);
+    //   return top;
+    // }
+
+    try {
+      ids = await fetch(`topstories`);
+      top = await Promise.all(ids.map(id => fetchItem(id)));
+          // shortCache.set(`topstories`, top);
+      return {
+        statusCode: 200,
+        body: JSON.stringify(
+          {
+            message: top,
+            input: event
+          },
+          null,
+          2
+        )
+      };
+    } catch (error) {
+      return {
+        statusCode: 200,
+        body: JSON.stringify(
+          {
+            message: error,
+            input: event
+          },
+          null,
+          2
+        )
+      };
+    }
+}
 
 async function fetch(child: string) {
   try {

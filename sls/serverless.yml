@@ -15,5 +15,6 @@ functions:
     handler: dist/handler.fetchItem
   fetchItems:
     handler: dist/handler.fetchItems
-
+  fetchTopStories:
+    handler: dist/handler.fetchTopStories
   
